@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        filename: [1.txt, 2.txt, 3.txt]
+    runs-on: windows-latest
+    name: gen file ${{ matrix.filename }}
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: gen file
+        run: |
+          echo hahaha > ${{ matrix.filename }}
+          gzip ${{ matrix.filename }}
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: ${{ matrix.filename }}.gz
+          path: ${{ matrix.filename }}.gz
+  collect:
+    runs-on: windows-latest
+    name: collect
+    steps:
+    - uses: actions/checkout@v2
+    - name: Download 1.txt
+      uses: actions/download-artifact@v2.0.10
+      with:
+        name: 1.txt.gz
+    - name: Download 2.txt
+      uses: actions/download-artifact@v2.0.10
+      with:
+        name: 2.txt.gz
+    - name: Download 3.txt
+      uses: actions/download-artifact@v2.0.10
+      with:
+        name: 3.txt.gz
+    - name: zip
+      run: |
+        gunzip *.gz
+        mkdir folder
+        zip a 1.txt 2.txt 3.txt folder
+          - name: Upload a Build Artifact
+    - uses: actions/upload-artifact@v2.2.4
+      with:
+        name: a.zip
+        path: a.zip
