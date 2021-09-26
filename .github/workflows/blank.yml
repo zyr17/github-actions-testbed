@@ -31,6 +31,7 @@ jobs:
           path: ${{ matrix.filename }}.gz
   collect:
     runs-on: windows-latest
+    needs: [build]
     name: collect
     steps:
     - uses: actions/checkout@v2
